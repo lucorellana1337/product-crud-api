@@ -1,0 +1,39 @@
+name: Java CRUD API CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-run-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 25
+      uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 25
+
+    - name: Compile Java code
+      run: |
+        mkdir -p bin
+        javac -cp ".:lib/gson-2.10.1.jar:lib/sqlite-jdbc-3.42.0.0.jar" -d bin src/**/*.java
+
+    - name: Run server
+      run: |
+        java -cp "bin:lib/gson-2.10.1.jar:lib/sqlite-jdbc-3.42.0.0.jar" App &
+        sleep 5
+
+    - name: Test API - Create Product
+      run: |
+        curl -X POST -H "Content-Type: application/json" -d '{"nombre":"TestProduct","categoria":"Test","precio":1.23,"stock":10}' http://localhost:8000/productos
+
+    - name: Test API - Get Products
+      run: |
+        curl http://localhost:8000/productos
