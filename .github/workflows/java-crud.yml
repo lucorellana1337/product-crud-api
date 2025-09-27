@@ -23,7 +23,8 @@ jobs:
     - name: Compile Java code
       run: |
         mkdir -p bin
-        javac -cp ".:lib/gson-2.10.1.jar:lib/sqlite-jdbc-3.42.0.0.jar" -d bin src/**/*.java
+        find src -name "*.java" > sources.txt
+        javac -cp "lib/gson-2.10.1.jar:lib/sqlite-jdbc-3.42.0.0.jar" -d bin @sources.txt
 
     - name: Run server & test API
       run: |
