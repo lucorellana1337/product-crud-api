@@ -25,14 +25,17 @@ jobs:
         mkdir -p bin
         javac -cp ".:lib/gson-2.10.1.jar:lib/sqlite-jdbc-3.42.0.0.jar" -d bin src/**/*.java
 
-    - name: Run server
+    - name: Run server in background
       run: |
         java -cp "bin:lib/gson-2.10.1.jar:lib/sqlite-jdbc-3.42.0.0.jar" App &
-        sleep 5
+        echo "Esperando que el servidor arranque..."
+        sleep 10
 
     - name: Test API - Create Product
       run: |
-        curl -X POST -H "Content-Type: application/json" -d '{"nombre":"TestProduct","categoria":"Test","precio":1.23,"stock":10}' http://localhost:8000/productos
+        curl -X POST -H "Content-Type: application/json" \
+        -d '{"nombre":"TestProduct","categoria":"Test","precio":1.23,"stock":10}' \
+        http://localhost:8000/productos
 
     - name: Test API - Get Products
       run: |
